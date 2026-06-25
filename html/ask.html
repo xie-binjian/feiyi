@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非遗AI问答 - 智能非遗知识助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Noto Serif SC', 'Songti SC', serif;
+            background: linear-gradient(135deg, #f8f6f2 0%, #f0ebe3 50%, #e8e0d4 100%);
+            min-height: 100vh;
+        }
+
+        /* ==================== 头部介绍区 ==================== */
+        .ai-header {
+            background: linear-gradient(135deg, rgba(139, 35, 35, 0.95) 0%, rgba(165, 42, 42, 0.9) 100%);
+            padding: 70px 50px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #ffd700, #ff6b6b);
+            animation: gradientMove 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        .ai-header h1 {
+            color: #fff;
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            letter-spacing: 4px;
+        }
+
+        .ai-header p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 18px;
+            letter-spacing: 1px;
+            margin-bottom: 35px;
+        }
+
+        .ai-header .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .ai-header .feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .ai-header .feature:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .ai-header .feature-icon {
+            font-size: 22px;
+        }
+
+        .ai-header .feature-text {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* ==================== 问答主区域 ==================== */
+        .chat-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: linear-gradient(135deg, #fffbf5 0%, #f9f5ec 100%);
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(139, 35, 35, 0.12), inset 0 0 0 1px rgba(139, 35, 35, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chat-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b2323, #ffd700, #8b2323);
+        }
+
+        .chat-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, rgba(139, 35, 35, 0.05) 0%, rgba(165, 42, 42, 0.05) 100%);
+            border-bottom: 1px solid rgba(139, 35, 35, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b2323, #a52a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 15px rgba(139, 35, 35, 0.3);
+        }
+
+        .chat-info h2 {
+            color: #8b2323;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+            letter-spacing: 1px;
+        }
+
+        .chat-info .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        /* 聊天区域 */
+        .chat-area {
+            height: 420px;
+            padding: 25px 30px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+        }
+
+        .chat-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: rgba(139, 35, 35, 0.3);
+            border-radius: 3px;
+        }
+
+        .msg-user {
+            text-align: right;
+            margin: 16px 0;
+            animation: slideInRight 0.4s ease;
+        }
+
+        .msg-ai {
+            text-align: left;
+            margin: 16px 0;
+            animation: slideInLeft 0.4s ease;
+        }
+
+        .msg-user span {
+            background: linear-gradient(135deg, #8b2323, #a52a2a);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 20px 20px 5px 20px;
+            display: inline-block;
+            box-shadow: 0 5px 15px rgba(139, 35, 35, 0.25);
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .msg-ai span {
+            background: #fff;
+            color: #4a4a4a;
+            padding: 14px 20px;
+            border-radius: 20px 20px 20px 5px;
+            display: inline-block;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            max-width: 75%;
+            word-wrap: break-word;
+            border: 1px solid rgba(139, 35, 35, 0.1);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .msg-ai.loading span {
+            color: #8b2323;
+            font-style: italic;
+            background: rgba(139, 35, 35, 0.05);
+        }
+
+        /* 底部输入区 */
+        .chat-footer {
+            padding: 25px 30px;
+            background: #fff;
+            border-top: 1px solid rgba(139, 35, 35, 0.1);
+        }
+
+        .hot-tags {
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .hot-tags span {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #fff, #fafafa);
+            color: #8b2323;
+            border: 1.5px solid rgba(139, 35, 35, 0.18);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .hot-tags span:hover {
+            background: linear-gradient(135deg, #8b2323, #a52a2a);
+            color: #fff;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 35, 35, 0.25);
+        }
+
+        .input-area {
+            display: flex;
+            gap: 12px;
+        }
+
+        #ask-input {
+            flex: 1;
+            padding: 14px 22px;
+            font-size: 15px;
+            border: 2px solid rgba(139, 35, 35, 0.15);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #fafafa;
+            font-family: inherit;
+            color: #333;
+        }
+
+        #ask-input:focus {
+            border-color: #8b2323;
+            box-shadow: 0 0 0 4px rgba(139, 35, 35, 0.1);
+            background: #fff;
+        }
+
+        #ask-input::placeholder {
+            color: #aaa;
+        }
+
+        #send-btn {
+            padding: 0 35px;
+            background: linear-gradient(135deg, #8b2323, #a52a2a);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 35, 35, 0.25);
+            letter-spacing: 1px;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        #send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 35, 35, 0.35);
+            background: linear-gradient(135deg, #a52a2a, #8b2323);
+        }
+
+        #send-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ==================== 非遗知识导航区 ==================== */
+        .nav-section {
+            max-width: 900px;
+            margin: 0 auto 50px;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            color: #8b2323;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #8b2323, transparent);
+            margin: 12px auto 0;
+        }
+
+        .nav-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .nav-card {
+            background: linear-gradient(135deg, #fff 0%, #fffbf5 100%);
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(139, 35, 35, 0.12);
+            border: 2px solid rgba(139, 35, 35, 0.08);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-align: center;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(139, 35, 35, 0.2);
+            border-color: rgba(139, 35, 35, 0.2);
+        }
+
+        .nav-card .icon {
+            font-size: 44px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .nav-card h3 {
+            color: #8b2323;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .nav-card p {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ==================== 国家非遗链接 ==================== */
+        .official-section {
+            background: linear-gradient(135deg, #8b2323 0%, #a52a2a 100%);
+            padding: 50px 30px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .official-section h2 {
+            color: #fff;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .official-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .official-link {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 18px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            width: 220px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .official-link:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: #fff;
+        }
+
+        .official-link .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .official-link .name {
+            color: #8b2323;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .official-link .desc {
+            color: #999;
+            font-size: 13px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* ==================== 页脚 ==================== */
+        .footer {
+            background: linear-gradient(135deg, #8b2323 0%, #a52a2a 100%);
+            padding: 40px 30px 25px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .footer-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-divider {
+            width: 50%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 20px auto;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer-highlight {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* ==================== 动画 ==================== */
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ==================== 响应式 ==================== */
+        @media (max-width: 768px) {
+            .ai-header h1 { font-size: 30px; }
+            .ai-header p { font-size: 16px; }
+            .chat-container { width: 95%; margin: 30px auto; }
+            .chat-area { height: 350px; padding: 20px; }
+            .nav-cards { grid-template-columns: 1fr; }
+            .input-area { flex-direction: column; }
+            #send-btn { padding: 14px; }
+            .msg-user span, .msg-ai span { max-width: 85%; }
+            .official-link { width: 100%; max-width: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav">
+        <div class="logo">非遗文化科普</div>
+        <div class="nav-list">
+            <a href="../index.html">首页</a>
+            <div class="dropdown">
+                <a>🎨 非遗项目 ▼</a>
+                <div class="dropdown-content">
+                    <a href="paper.html">✂️ 民间剪纸</a>
+                    <a href="shadow.html">🎭 皮影戏</a>
+                    <a href="kite.html">🪁 传统风筝</a>
+                    <a href="face.html">🎨 戏曲脸谱</a>
+                    <a href="clay.html">🏺 民间泥塑</a>
+                    <a href="bamboo.html">🎋 传统竹编</a>
+                </div>
+            </div>
+            <a href="ask.html" class="active">🤖 AI问答</a>
+        </div>
+    </nav>
+
+    <!-- AI助手头部介绍 -->
+    <section class="ai-header">
+        <h1>🤖 非遗智能问答助手</h1>
+        <p>随时为您解答非遗文化相关问题，探索中华传统技艺的奥秘</p>
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">📚</span>
+                <span class="feature-text">知识丰富</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                <span class="feature-text">快速响应</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🎯</span>
+                <span class="feature-text">精准解答</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">💬</span>
+                <span class="feature-text">智能对话</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 问答聊天区域 -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-info">
+                <h2>非遗知识助手</h2>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>在线 · 随时为您解答</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chat-area">
+            <div class="msg-ai">
+                <span>您好！我是非遗文化智能问答助手！<br><br>支持剪纸、皮影戏、风筝、脸谱、泥塑、竹编六大非遗问答。<br>输入任意相关问题即可提问，我将智能为您解答！</span>
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <div class="hot-tags">
+                <span onclick="quickAsk('剪纸的历史起源')">剪纸的历史起源</span>
+                <span onclick="quickAsk('剪纸有哪些技法')">剪纸有哪些技法</span>
+                <span onclick="quickAsk('皮影戏有哪些流派')">皮影戏有哪些流派</span>
+                <span onclick="quickAsk('皮影戏特点')">皮影戏特点</span>
+                <span onclick="quickAsk('风筝的制作工艺')">风筝的制作工艺</span>
+                <span onclick="quickAsk('脸谱的颜色含义')">脸谱的颜色含义</span>
+                <span onclick="quickAsk('泥塑的代表作品')">泥塑的代表作品</span>
+                <span onclick="quickAsk('竹编的实用价值')">竹编的实用价值</span>
+            </div>
+            <div class="input-area">
+                <input type="text" id="ask-input" placeholder="输入你想了解的非遗知识...">
+                <button id="send-btn">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 非遗知识导航区 -->
+    <section class="nav-section">
+        <h2 class="section-title">非遗知识导航</h2>
+        <div class="nav-cards">
+            <div class="nav-card" onclick="quickAsk('剪纸')">
+                <span class="icon">✂️</span>
+                <h3>民间剪纸</h3>
+                <p>镂空艺术，指尖传承</p>
+            </div>
+            <div class="nav-card" onclick="quickAsk('皮影戏')">
+                <span class="icon">🎭</span>
+                <h3>皮影戏</h3>
+                <p>光影传奇，千年戏曲</p>
+            </div>
+            <div class="nav-card" onclick="quickAsk('风筝')">
+                <span class="icon">🪁</span>
+                <h3>传统风筝</h3>
+                <p>乘风而上，民俗祈愿</p>
+            </div>
+            <div class="nav-card" onclick="quickAsk('脸谱')">
+                <span class="icon">🎨</span>
+                <h3>戏曲脸谱</h3>
+                <p>五色油彩，人物忠奸</p>
+            </div>
+            <div class="nav-card" onclick="quickAsk('泥塑')">
+                <span class="icon">🏺</span>
+                <h3>民间泥塑</h3>
+                <p>泥土塑万象，市井艺术</p>
+            </div>
+            <div class="nav-card" onclick="quickAsk('竹编')">
+                <span class="icon">🎋</span>
+                <h3>传统竹编</h3>
+                <p>一挑一压，编织器物</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 国家级非遗链接 -->
+    <section class="official-section">
+        <h2>国家级非遗权威资源</h2>
+        <div class="official-links">
+            <a href="https://www.ihchina.cn/" target="_blank" class="official-link">
+                <span class="icon">🏛️</span>
+                <span class="name">中国非遗网</span>
+                <span class="desc">官方权威平台</span>
+            </a>
+            <a href="https://whc.unesco.org/" target="_blank" class="official-link">
+                <span class="icon">🌍</span>
+                <span class="name">联合国教科文组织</span>
+                <span class="desc">世界遗产国际平台</span>
+            </a>
+            <a href="https://www.mct.gov.cn/" target="_blank" class="official-link">
+                <span class="icon">🏛️</span>
+                <span class="name">文化和旅游部</span>
+                <span class="desc">国家非遗管理机构</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="../index.html" class="footer-link">首页</a>
+                <a href="paper.html" class="footer-link">剪纸</a>
+                <a href="shadow.html" class="footer-link">皮影戏</a>
+                <a href="kite.html" class="footer-link">风筝</a>
+                <a href="face.html" class="footer-link">脸谱</a>
+                <a href="clay.html" class="footer-link">泥塑</a>
+                <a href="bamboo.html" class="footer-link">竹编</a>
+            </div>
+            <div class="footer-divider"></div>
+            <p class="footer-text">
+                <span class="footer-highlight">非遗文化科普平台</span> ©2026<br>
+                传承中华传统手工艺 · 弘扬民族优秀文化
+            </p>
+        </div>
+    </footer>
+
+    <!-- ========== 问答核心逻辑（保留不变） ========== -->
+    <script>
+        // 大类兜底科普（无精准匹配时自动输出）
+        const baseInfo = {
+            剪纸: "民间剪纸是我国国家级传统美术类非物质文化遗产，起源于汉代，距今已有两千多年历史。它以纸张为载体，通过剪、刻、镂、撕等技法创作镂空纹样，题材多为花鸟、吉祥纹样、民俗故事。剪纸观赏性强、寓意吉祥，广泛用于春节窗花、婚嫁喜花等民俗场景，是流传最广、最贴近百姓生活的民间艺术。",
+            皮影戏: "皮影戏又称灯影戏，是国家级传统戏剧类非遗。以兽皮或纸板雕刻人物道具，借助灯光投射影子，艺人幕后操纵、搭配唱腔与器乐表演故事。集雕刻、绘画、戏曲、表演于一体，是古老的光影戏曲艺术，流传千年，流派众多。",
+            风筝: "传统风筝是国家级传统技艺类非遗，古称纸鸢，起源于春秋战国。古人最初用于军事，后发展为民俗娱乐。依靠竹骨扎制、纸面彩绘、力学调校制成，造型多样、寓意吉祥，是兼具竞技、观赏、民俗价值的传统手工艺。",
+            脸谱: "戏曲脸谱是传统戏曲标志性造型艺术，属于非遗传统美术范畴。通过固定色彩、纹样、线条区分人物性格、身份、善恶，是戏曲文化的视觉核心。脸谱承载传统伦理观念与民俗审美，是极具代表性的中华传统文化符号。",
+            泥塑: "民间泥塑是国家级传统美术非遗，以天然黏土为原料，经揉泥、塑形、阴干、彩绘制成。造型夸张质朴、色彩明艳、题材接地气，多表现民俗生活、吉祥瑞兽、人物形象，是根植民间、烟火气十足的传统艺术。",
+            竹编: "传统竹编是国家级传统技艺非遗，依托天然竹材，经劈丝、打磨、挑压编织制成各类器物。历史悠久、环保耐用，兼具实用性与观赏性，广泛用于生活器具、装饰工艺品，是古人就地取材、匠心造物的经典技艺。"
+        };
+
+        // 超大全精准题库
+        const answerMap = {
+            // 剪纸
+            "剪纸的历史起源": "剪纸艺术起源于汉代，距今已有两千余年。早期多用于祭祀祈福、器物装饰；唐宋时期走入民间、全面普及；明清达到艺术鼎盛，技法、题材、样式完全成熟，是中国最古老、最普及的民间镂空艺术。",
+            "剪纸有哪些技法": "传统剪纸核心技法包含剪、刻、镂、撕、烫五大类，行业遵循「圆、尖、方、缺、线」五字准则，讲究线条流畅、虚实结合，阴阳刻交替使用，层次丰富、造型精致。",
+            "剪纸用途": "剪纸多用于春节窗花、婚嫁喜花、节日礼花、刺绣底样、民俗祭祀装饰等，每一种纹样都承载吉祥寓意，寄托百姓平安顺遂、富贵吉祥的美好愿望。",
+            "剪纸流派": "中国剪纸南北风格差异明显：北方剪纸粗犷简练、色彩浓烈；南方剪纸细腻精巧、线条灵动，代表地区有陕西、山西、河北、浙江、广东等地剪纸。",
+
+            // 皮影戏
+            "皮影戏有哪些流派": "国内主流皮影流派：陕西皮影、唐山皮影、四川皮影、湖北皮影、北京皮影。陕西古朴精细，唐山唱腔优美，四川灵动俏皮，各有鲜明地域特色。",
+            "皮影戏是怎么表演的": "皮影戏以白布为幕、灯光为源，艺人幕后手持操纵杆控制皮影动作，搭配地方戏曲唱腔、锣鼓伴奏，生动演绎历史典故、神话传说、民间故事。",
+            "皮影戏特点": "皮影戏光影效果独特、造型古朴、唱腔地道、道具精美，是集雕刻、绘画、戏曲、表演于一体的综合性民间艺术，便携易演、适配乡村市井演出场景。",
+            "皮影戏起源": "皮影戏始于西汉、兴于唐宋、盛于明清，是中国最早的光影表演艺术，已有两千年传承历史。",
+
+            // 风筝
+            "风筝的制作工艺": "传统风筝四步工艺：扎骨、整形、裱糊、彩绘。选用轻质竹材搭建对称骨架，调校平衡，裱糊坚韧纸面，手绘民俗吉祥纹样，讲究对称、轻盈、御风稳定。",
+            "风筝的历史起源": "风筝古称纸鸢，起源于春秋时期，最初用于军事侦察、传递军情，汉代转为娱乐，唐宋全民盛行，明清工艺成熟，成为经典民俗活动。",
+            "风筝流派": "知名风筝流派：潍坊风筝、北京沙燕风筝、天津风筝、江南风筝。其中潍坊风筝是中国最具代表性的传统风筝体系。",
+
+            // 脸谱
+            "脸谱的颜色含义": "红脸忠义英勇、黑脸刚正无私、白脸奸诈多疑、蓝脸勇猛桀骜、黄脸凶狠骁勇、绿脸侠义草莽，脸谱色彩是区分戏曲人物性格、身份、善恶的核心符号。",
+            "脸谱作用": "脸谱能够直观塑造人物形象、区分忠奸善恶、强化戏曲表现力，是戏曲文化、传统审美、民俗文化的重要载体。",
+
+            // 泥塑
+            "泥塑的代表作品": "四大经典泥塑：天津泥人张人物泥塑、无锡惠山泥人、陕西凤翔泥塑、河南浚县泥咕咕，都是国家级非遗经典代表作。",
+            "泥塑的制作过程": "选材揉泥→手工塑形→细节修整→自然阴干→矿物彩绘，全程手工制作，保留泥土质朴质感。",
+            "泥塑特点": "造型夸张生动、色彩鲜艳浓烈、题材贴近民俗生活，质朴可爱、烟火气息浓厚。",
+
+            // 竹编
+            "竹编的实用价值": "竹编环保轻便、坚固透气，可制作收纳篮、竹席、竹扇、灯具、农具等生活器物，同时竹编工艺品雅致古朴，极具观赏与收藏价值。",
+            "竹编技法": "传统竹编核心技法：人字编、十字编、挑压编、六角编、镂空编，变化丰富，可编织出各式纹理与造型。",
+            "竹编历史": "竹编历史可追溯至新石器时代，历经数千年发展，贯穿古人衣食住行，是中华最古老的传统技艺之一。"
+        };
+
+        // 匹配关键词（优先级：精准匹配 > 关键词匹配 > 大类兜底）
+        function getAnswer(question) {
+            // 精准匹配优先
+            if(answerMap[question]) return answerMap[question];
+
+            // 关键词模糊匹配
+            if(question.includes("剪纸")) return baseInfo["剪纸"];
+            if(question.includes("皮影") || question.includes("皮影戏")) return baseInfo["皮影戏"];
+            if(question.includes("风筝")) return baseInfo["风筝"];
+            if(question.includes("脸谱")) return baseInfo["脸谱"];
+            if(question.includes("泥塑")) return baseInfo["泥塑"];
+            if(question.includes("竹编")) return baseInfo["竹编"];
+
+            // 完全不匹配
+            return "欢迎咨询非遗知识！您可以提问剪纸、皮影戏、传统风筝、戏曲脸谱、民间泥塑、传统竹编相关问题，我将为您详细科普。";
+        }
+
+        // 快速提问
+        function quickAsk(text) {
+            document.getElementById('ask-input').value = text;
+            sendMessage();
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const input = document.getElementById('ask-input');
+            const chatArea = document.getElementById('chat-area');
+            const question = input.value.trim();
+            if(!question) return;
+
+            // 用户消息
+            chatArea.innerHTML += `<div class="msg-user"><span>${question}</span></div>`;
+            // 加载
+            chatArea.innerHTML += `<div class="msg-ai loading"><span class="loading-text">正在思考中</span></div>`;
+            chatArea.scrollTop = chatArea.scrollHeight;
+            input.value = "";
+
+            setTimeout(() => {
+                document.querySelector(".loading").remove();
+                let ans = getAnswer(question);
+                chatArea.innerHTML += `<div class="msg-ai"><span>${ans}</span></div>`;
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 700);
+        }
+
+        // 绑定事件
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+        document.getElementById("ask-input").addEventListener("keydown", e => {
+            if(e.key === "Enter") sendMessage();
+        });
+    </script>
+</body>
+</html>

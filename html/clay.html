@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>民间泥塑 - 非遗详情</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "SimSun", "Songti SC", serif;
+            background: linear-gradient(135deg, #faf5ef 0%, #f5ece0 50%, #eee0cd 100%);
+            min-height: 100vh;
+        }
+
+        /* 主容器 泥塑赭石土黄玻璃拟态国风升级 */
+        .detail-wrap {
+            width: 95%;
+            max-width: 1300px;
+            margin: 50px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            align-items: center;
+            background: rgba(255, 248, 240, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 60px;
+            border-radius: 24px;
+            box-shadow: 0 12px 45px rgba(139, 69, 19, 0.12), inset 0 0 0 1px rgba(139, 69, 19, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .detail-wrap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8B4513, #D2691E, #CD853F, #8B4513);
+            background-size: 300% 100%;
+            animation: gradientMove 4s ease-in-out infinite;
+            z-index: 2;
+        }
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .detail-wrap::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            right: 24px;
+            bottom: 24px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        /* 顶部图片画廊区域 */
+        .img-gallery-wrap {
+            width: 100%;
+        }
+        .main-single-img {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.22), 0 0 0 4px rgba(139, 69, 19, 0.08);
+            transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            display: block;
+            margin: 0 auto 30px;
+        }
+        .main-single-img:hover {
+            transform: scale(1.04) translateY(-8px);
+            box-shadow: 0 16px 45px rgba(139, 69, 19, 0.28), 0 0 0 6px rgba(139, 69, 19, 0.12);
+        }
+        /* 四图网格画廊 - 增强版 */
+        .paper-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin: 45px 0;
+            position: relative;
+        }
+        .paper-gallery-grid::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, #8B4513, #D2691E, #CD853F, #8B4513);
+            background-size: 300% 100%;
+            animation: gradientMove 3s ease-in-out infinite;
+            border-radius: 3px;
+        }
+        .gallery-item {
+            overflow: hidden;
+            border-radius: 18px;
+            border: 2px solid rgba(139,35,35,0.1);
+            box-shadow: 0 8px 24px rgba(139,35,35,0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+            position: relative;
+        }
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8B4513, #D2691E);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        .gallery-item:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 18px 40px rgba(139,35,35,0.2);
+            border-color: rgba(139,35,35,0.3);
+            background: linear-gradient(135deg, #fff 0%, #fff5e6 100%);
+        }
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.15);
+        }
+        .gallery-desc {
+            padding: 15px;
+            text-align: center;
+            font-size: 15px;
+            color: #666;
+            background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover .gallery-desc {
+            color: #8B4513;
+            font-weight: 600;
+            background: linear-gradient(135deg, #fff5e6 0%, #fff 100%);
+        }
+
+        .img-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        .img-tag {
+            background: linear-gradient(135deg, #8B4513, #CD853F);
+            color: #fff;
+            padding: 9px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 14px rgba(139, 69, 19, 0.22);
+            transition: all 0.35s ease;
+            backdrop-filter: blur(4px);
+        }
+        .img-tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(139, 69, 19, 0.32);
+        }
+
+        .img-info-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(6px);
+            padding: 22px 26px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(139, 69, 19, 0.07);
+            border: 1px solid rgba(139, 69, 19, 0.08);
+            margin: 20px 0;
+        }
+        .img-info-card h4 {
+            color: #8B4513;
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .img-info-card p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.75;
+            margin: 0;
+        }
+        .decorative-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8B4513, transparent);
+            margin: 40px 0;
+            opacity: 0.25;
+        }
+
+        /* 音频播放器 科技风 */
+        .audio-player {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(8px);
+            padding: 24px 30px;
+            border-radius: 20px;
+            margin: 30px auto;
+            width: 95%;
+            box-shadow: 0 6px 22px rgba(139, 69, 19, 0.09);
+            border: 1px solid rgba(139, 69, 19, 0.12);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.35s ease;
+        }
+        .audio-player:hover {
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.16);
+            border-color: rgba(139, 69, 19, 0.2);
+            transform: translateY(-4px);
+        }
+        .audio-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, #8B4513, #CD853F);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: 0 5px 16px rgba(139, 69, 19, 0.3);
+            flex-shrink: 0;
+        }
+        .audio-info {
+            flex: 1;
+        }
+        .audio-title {
+            color: #8B4513;
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .audio-desc {
+            color: #888;
+            font-size: 14px;
+            display: block;
+        }
+        .audio-controls audio {
+            width: 200px;
+            height: 42px;
+        }
+
+        /* 正文区域 */
+        .detail-text {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        .detail-text h2 {
+            color: #8B4513;
+            font-size: 46px;
+            margin-bottom: 35px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 2px 2px 6px rgba(139, 69, 19, 0.12);
+            position: relative;
+            letter-spacing: 4px;
+        }
+        .detail-text h2::before {
+            content: '🏺';
+            display: block;
+            font-size: 52px;
+            margin-bottom: 12px;
+        }
+        .detail-text h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #8B4513, transparent);
+            margin: 24px auto 0;
+        }
+        .detail-text p {
+            line-height: 2.3;
+            font-size: 18px;
+            color: #444;
+            margin: 22px 0;
+            text-align: justify;
+            font-weight: 400;
+            text-indent: 2em;
+        }
+
+        /* 数据可视化图表模块 新增科技图表板块 */
+        .data-chart-wrap {
+            width: 100%;
+            padding: 40px;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            border: 1px solid rgba(139,35,35,0.1);
+            box-shadow: 0 8px 28px rgba(139,35,35,0.08);
+            margin: 50px 0;
+        }
+        .chart-title {
+            text-align: center;
+            color: #8B4513;
+            font-size: 26px;
+            margin-bottom: 35px;
+            letter-spacing: 2px;
+        }
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+        }
+        .chart-box {
+            padding: 25px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(139,35,35,0.06);
+        }
+        .chart-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* 高亮文化板块 */
+        .highlight-section {
+            background: linear-gradient(135deg, rgba(255, 248, 240, 0.85) 0%, rgba(255, 240, 230, 0.85) 100%);
+            backdrop-filter: blur(6px);
+            padding: 36px;
+            border-radius: 18px;
+            margin: 45px 0;
+            border-left: 6px solid #8B4513;
+            box-shadow: 0 6px 22px rgba(139, 69, 19, 0.09);
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .highlight-section:hover {
+            transform: translateX(8px);
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.14);
+        }
+        .highlight-section h3 {
+            color: #8B4513;
+            font-size: 24px;
+            margin-bottom: 22px;
+            font-weight: 600;
+        }
+
+        /* 四大特性网格 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 35px;
+            margin: 50px 0;
+        }
+        .feature-item {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(6px);
+            padding: 35px;
+            border-radius: 18px;
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.06);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8B4513, #CD853F);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 18px 40px rgba(139, 69, 19, 0.16);
+            border-color: rgba(139, 69, 19, 0.25);
+            background: rgba(255, 255, 255, 0.92);
+        }
+        .feature-item:hover::before {
+            opacity: 1;
+        }
+        .feature-item h4 {
+            color: #8B4513;
+            font-size: 24px;
+            margin-bottom: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .feature-item p {
+            font-size: 17px;
+            color: #505050;
+            line-height: 1.9;
+            margin: 0;
+        }
+
+        /* 视频区域 */
+        .video-box {
+            margin: 20px 0 40px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 45px;
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.06) 0%, rgba(139, 69, 19, 0.12) 100%);
+            backdrop-filter: blur(6px);
+            border-radius: 30px;
+            border: 2px solid rgba(139, 69, 19, 0.18);
+            position: relative;
+        }
+        .video-box::before {
+            content: '🎬';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            background: linear-gradient(135deg, #fff, #fff5e6);
+            padding: 12px 24px;
+            border-radius: 26px;
+            box-shadow: 0 8px 28px rgba(139, 69, 19, 0.25);
+        }
+        .video-box video {
+            width: 100%;
+            max-width: 900px;
+            border-radius: 24px;
+            box-shadow: 0 18px 60px rgba(139, 69, 19, 0.38), 0 0 0 10px rgba(139, 69, 19, 0.15);
+            display: block;
+            margin: 0 auto;
+            transition: all 0.45s ease;
+        }
+        .video-box video:hover {
+            box-shadow: 0 20px 65px rgba(139, 69, 19, 0.38), 0 0 0 10px rgba(139, 69, 19, 0.12);
+            transform: scale(1.04);
+        }
+
+        /* 留言表单 */
+        .form-box {
+            margin: 30px auto;
+            padding: 65px;
+            background: linear-gradient(135deg, rgba(255, 249, 240, 0.92) 0%, rgba(255, 245, 235, 0.88) 100%);
+            backdrop-filter: blur(12px);
+            border-radius: 35px;
+            border: 2px solid rgba(139, 69, 19, 0.18);
+            box-shadow: 0 18px 55px rgba(139, 69, 19, 0.18), inset 0 0 0 1px rgba(139, 69, 19, 0.05);
+            position: relative;
+            max-width: 950px;
+        }
+        .form-box::before {
+            content: '✍️';
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 52px;
+            background: linear-gradient(135deg, #fff, #fff5e6);
+            backdrop-filter: blur(8px);
+            padding: 14px 28px;
+            border-radius: 50%;
+            box-shadow: 0 10px 35px rgba(139, 69, 19, 0.25);
+            border: 3px solid rgba(139, 69, 19, 0.1);
+        }
+        .form-box h3 {
+            color: #8B4513;
+            margin-bottom: 40px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        .form-item {
+            margin: 28px 0;
+        }
+        .form-item label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #444;
+            font-size: 17px;
+            letter-spacing: 1px;
+        }
+        .form-item input, .form-item textarea {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid rgba(139, 69, 19, 0.18);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px);
+            font-size: 17px;
+            transition: all 0.35s ease;
+            outline: none;
+            font-family: inherit;
+        }
+        .form-item input:focus, .form-item textarea:focus {
+            border-color: #8B4513;
+            box-shadow: 0 0 0 5px rgba(139, 69, 19, 0.09), 0 6px 20px rgba(139, 69, 19, 0.12);
+            transform: scale(1.015);
+            background: #fff;
+        }
+        .form-item textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #8B4513, #CD853F);
+            color: #fff;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 19px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.35s ease;
+            box-shadow: 0 8px 24px rgba(139, 69, 19, 0.28);
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            transition: left 0.6s ease;
+        }
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+        .submit-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(139, 69, 19, 0.38);
+            background: linear-gradient(135deg, #CD853F, #8B4513);
+        }
+
+        /* 留言区 */
+        .comments-section {
+            margin: 30px auto;
+            padding: 55px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 2px solid rgba(139, 69, 19, 0.15);
+            box-shadow: 0 15px 50px rgba(139, 69, 19, 0.15), inset 0 0 0 1px rgba(139, 69, 19, 0.05);
+            max-width: 950px;
+        }
+        .comments-section h3 {
+            color: #8B4513;
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(139, 69, 19, 0.1);
+        }
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .comment-item {
+            background: linear-gradient(135deg, rgba(255, 249, 240, 0.95) 0%, rgba(255, 245, 235, 0.9) 100%);
+            backdrop-filter: blur(8px);
+            padding: 32px;
+            border-radius: 22px;
+            border-left: 5px solid #8B4513;
+            box-shadow: 0 4px 18px rgba(139, 69, 19, 0.07);
+            transition: all 0.35s ease;
+        }
+        .comment-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 26px rgba(139, 69, 19, 0.12);
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .comment-author {
+            font-weight: 600;
+            color: #8B4513;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comment-author::before {
+            content: '👤';
+            font-size: 20px;
+        }
+        .comment-time {
+            font-size: 14px;
+            color: #999;
+        }
+        .comment-content {
+            color: #505050;
+            line-height: 1.9;
+            font-size: 16px;
+        }
+        .no-comments {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 18px;
+        }
+
+        .back-btn {
+            display: block;
+            margin: 50px auto 30px;
+            padding: 20px 55px;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
+            background-size: 200% 100%;
+            color: #fff;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            letter-spacing: 3px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 12px 35px rgba(139, 69, 19, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            font-size: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(139, 69, 19, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.2);
+            background-position: 100% 0;
+        }
+        .back-btn:hover::before {
+            left: 100%;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+            color: #fff;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+        }
+        footer p {
+            font-size: 16px;
+            opacity: 0.92;
+            line-height: 1.9;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 1024px) {
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+            .paper-gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .paper-gallery-grid, .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .detail-text h2 {
+                font-size: 34px;
+            }
+            .detail-wrap {
+                padding: 30px;
+            }
+            .data-chart-wrap {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="logo">非遗文化科普</div>
+        <div class="nav-list">
+            <a href="../index.html">首页</a>
+            <div class="dropdown">
+                <a>🎨 非遗项目 ▼</a>
+                <div class="dropdown-content">
+                    <a href="paper.html">✂️ 民间剪纸</a>
+                    <a href="shadow.html">🎭 皮影戏</a>
+                    <a href="kite.html">🪁 传统风筝</a>
+                    <a href="face.html">🎨 戏曲脸谱</a>
+                    <a href="clay.html" class="active">🏺 民间泥塑</a>
+                    <a href="bamboo.html">🎋 传统竹编</a>
+                </div>
+            </div>
+            <a href="ask.html">🤖 AI问答</a>
+        </div>
+    </nav>
+
+    <div class="detail-wrap>
+        <!-- 图片画廊区域 -->
+        <div class="img-gallery-wrap">
+            <img src="../img/card/clay.jpg" alt="民间泥塑主视觉作品" class="main-single-img">
+
+            <div class="img-tags">
+                <span class="img-tag">🏺 国家级非遗</span>
+                <span class="img-tag">⏰ 七千余年历史</span>
+                <span class="img-tag">🎐 三大主流流派</span>
+                <span class="img-tag">👨‍👩‍👧 全民亲子手工</span>
+                <span class="img-tag">📊 全国十余座泥塑文化名城</span>
+            </div>
+
+            <div class="img-info-card">
+                <h4>📸 主图介绍</h4>
+                <p>经典天津泥人张民俗泥塑作品，选用天然河泥经反复捶打、醒泥后手工塑造，矿物颜料多层上色，人物神态生动鲜活。泥塑根植民间市井，题材取自戏曲、民俗、孩童嬉戏，是接地气、群众基础极广的传统造型手工艺。</p>
+            </div>
+
+            <div class="decorative-line"></div>
+
+            <h3 style="text-align:center;color:#8B4513;font-size:26px;margin-bottom:25px;">民间泥塑精品作品数字画廊</h3>
+            <div class="paper-gallery-grid">
+                <div class="gallery-item">
+                    <img src="../img/duoyv/clay1.jpg" alt="戏曲人物泥塑">
+                    <div class="gallery-desc">古典戏曲人物泥塑</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../img/duoyv/clay2.jpg" alt="民俗生活泥塑">
+                    <div class="gallery-desc">市井民俗生活场景泥塑</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../img/duoyv/clay3.jpg" alt="瑞兽吉祥泥塑">
+                    <div class="gallery-desc">传统瑞兽吉祥泥塑摆件</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="../img/duoyv/clay4.jpg" alt="现代文创泥塑">
+                    <div class="gallery-desc">国潮IP现代创意泥塑</div>
+                </div>
+            </div>
+
+            <div class="img-info-card">
+                <h4>🖼️ 四幅作品数字化解析</h4>
+                <p>四张图片完整覆盖泥塑四大创作赛道：古典戏曲人物、市井民俗场景、传统吉祥瑞兽、国潮现代文创。横向对比直观展示三大流派工艺差异：天津泥人张写实细腻、惠山泥人圆润喜庆、凤翔泥塑粗犷浓烈，完整呈现泥塑七千余年风格迭代脉络。</p>
+            </div>
+
+            <div class="decorative-line"></div>
+
+            <!-- 视频播放器 - 放在前面更显眼 -->
+            <div class="video-box">
+                <video controls>
+                    <source src="../video/clay.mp4" type="video/mp4">
+                    你的浏览器不支持视频播放，请更换浏览器查看民间泥塑数字化制作科普视频
+                </video>
+            </div>
+
+            <div class="decorative-line"></div>
+
+            <!-- 音频模块 -->
+            <div class="audio-player">
+                <div class="audio-icon">🎵</div>
+                <div class="audio-info">
+                    <span class="audio-title">民间泥塑非遗数字化科普音频</span>
+                    <span class="audio-desc">涵盖起源、三大流派、古法塑造工艺、现代文创数字化转型全维度讲解</span>
+                </div>
+                <div class="audio-controls">
+                    <audio controls src="../audio/clay.mp3">您的浏览器不支持音频播放功能。
+                </div>
+            </div>
+
+            <div class="img-info-card">
+                <h4>💡 数字化收藏小贴士</h4>
+                <p>传统天然泥土泥塑极易风干开裂、受潮软化、虫蛀破损，高清扫描+3D数字建模存档可永久保存；古法手工泥塑收藏价值远高于工业量产软陶；现代轻量化树脂、数字盲盒周边已解决传统泥塑保存难、运输易损坏的行业痛点。</p>
+            </div>
+        </div>
+
+        <div class="detail-text">
+            <h2>民间泥塑</h2>
+            <p>泥塑俗称泥人，国家级非物质文化遗产，起源于新石器时代，距今已有七千余年完整传承脉络。先民最早以泥土塑造祭祀神像、生活器物，唐宋时期走入民间市井，明清工艺走向巅峰，逐步分化天津泥人张、惠山泥人、凤翔泥塑三大艺术流派，是取材天然、门槛亲民、全民可参与的传统立体造型手工艺。</p>
+            <p>泥塑完整遵循“采泥、捶泥、醒泥、塑形、开脸、上色、封护”七大古法工序，仅依靠天然黏土、矿物颜料基础材料，无需复杂工具即可塑造立体形象。创作题材包罗万象：戏曲人物、市井生活、神话瑞兽、现代国潮IP均可作为塑造载体。一捧泥土塑百态人间，承载中国人扎根乡土、热爱生活的质朴民俗精神。</p>
+
+            <!-- 新增科技数据图表板块 -->
+            <div class="data-chart-wrap">
+                <h3 class="chart-title">民间泥塑行业数字化数据分析</h3>
+                <div class="chart-row">
+                    <div class="chart-box">
+                        <h4 class="chart-subtitle">全国泥塑文化传承地域分布占比</h4>
+                        <canvas id="areaChart"></canvas>
+                    </div>
+                    <div class="chart-box">
+                        <h4 class="chart-subtitle">泥塑爱好者受众年龄分层调研数据</h4>
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-section">
+                <h3>🏺 泥塑千年文化内核与当代数字化价值</h3>
+                <p style="margin:0;">泥塑是根植乡土民俗的活态文化数字符号，年节庙会摆放泥人祈福纳祥延续千年民俗习惯，不同泥塑造型拥有专属吉祥寓意：胖娃娃象征多福美满、瑞兽寓意驱邪平安、戏曲人物承载忠孝故事。当下数字化全面赋能泥塑产业：DIY线上手工课程、国潮泥塑盲盒、校园美育工坊、海外国风巡展同步落地，成为亲子文旅标志性非遗IP。</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h4>🛠️ 全套古法塑造工具体系</h4>
+                    <p>深层河泥、捶泥石板、醒泥陶盆、竹制塑形刮片、矿物国画颜料、蜂蜡封护油、高清扫描设备、3D泥塑建模软件</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🏺 三大主流艺术流派</h4>
+                    <p>天津泥人张写实细腻、无锡惠山泥人圆润喜庆、陕西凤翔泥塑粗犷浓烈，各具鲜明地域特色</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📜 完整千年传承脉络</h4>
+                    <p>新石器祭祀起源→唐宋民间普及→明清工艺巅峰→近现代传承断层修复→当代文创数字化创新发展</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌟 数字化创新应用场景</h4>
+                    <p>国潮泥塑盲盒、线下亲子手工工坊、线上美育课程、博物馆文创、海外数字艺术展览、乡村文旅泥塑体验基地</p>
+            </div>
+
+            <!-- 展示留言框 - 放在前面 -->
+            <div class="comments-section" id="clay-comments">
+                <h3>💬 用户数字化留言交流区</h3>
+                <div class="comments-list" id="clay-comments-list">
+                    <div class="no-comments">暂无留言，快来分享你对民间泥塑数字化发展的想法吧！</div>
+                </div>
+            </div>
+
+            <!-- 留言框 -->
+            <div class="form-box">
+                <h3>留言交流：你希望民间泥塑向什么数字化方向发展？</h3>
+                <form id="clayForm" onsubmit="return submitComment('clay')">
+                    <div class="form-item">
+                        <label>您的姓名</label>
+                        <input type="text" id="clay-name" placeholder="请输入姓名">
+                    </div>
+                    <div class="form-item">
+                        <label>联系邮箱</label>
+                        <input type="email" id="clay-email" placeholder="example@mail.com">
+                    </div>
+                    <div class="form-item">
+                        <label>谈谈你心中民间泥塑数字化发展方向</label>
+                        <textarea id="clay-content" rows="5" placeholder="例如：数字泥塑藏品、DIY线上建模、校园美育手工课、国潮泥塑盲盒、乡村文旅体验馆、海外数字展览等……"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">提交你的数字化创新建议</button>
+                </form>
+            </div>
+
+            <a href="../index.html" class="back-btn">← 返回非遗首页</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>非遗文化科普平台 ©2026<br>数字化传承千年民间泥塑 · 科技赋能传统非遗 · 创新弘扬东方手工美学</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <!-- 图表渲染脚本 -->
+    <script>
+        // 地域分布饼图
+        const areaCtx = document.getElementById('areaChart').getContext('2d');
+        new Chart(areaCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['天津北方传承区','江浙惠山传承区','陕西凤翔传承区','中原内陆传承区','其他地区'],
+                datasets: [{
+                    data: [36,29,18,11,6],
+                    backgroundColor: ['#8B4513','#CD853F','#e27070','#f2a0a0','#f8d0d0']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 年龄柱状图
+        const ageCtx = document.getElementById('ageChart').getContext('2d');
+        new Chart(ageCtx, {
+            type: 'bar',
+            data: {
+                labels: ['12-18青少年','19-30青年','31-50中年','50岁以上'],
+                datasets: [{
+                    label: '泥塑爱好者占比 %',
+                    data: [48,35,12,5],
+                    backgroundColor: '#8B4513'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                },
+                scales: {
+                    y: { beginAtZero: true, max: 50 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
