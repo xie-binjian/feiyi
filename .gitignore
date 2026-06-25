@@ -1,0 +1,17 @@
+﻿# IDE / Editor
+.vs/
+*.suo
+*.user
+*.sln.docstates
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temp
+*.tmp
+*.log
+*.swp
+~$*
+
+# OS
+Desktop.ini
